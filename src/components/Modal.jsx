@@ -1,15 +1,37 @@
 import React from "react";
 import { closeModal } from "../features/modal/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem } from "../features/page/pageSlice";
+import { addPage } from "../features/page/pageSlice";
 import { useState } from "react";
 
 const Modal = () => {
-  const { currentDate, dayNames, monthNames } = useSelector(
-    (store) => store.modal
-  );
   const { pages } = useSelector((store) => store.page);
-  const id = pages.length;
+  const id = pages.length + 1;
+
+  const currentDate = new Date();
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   const [entryText, setEntryText] = useState();
   const dayName = dayNames[currentDate.getDay()];
@@ -27,11 +49,12 @@ const Modal = () => {
       text: entryText,
       id: id,
       openMenu: false,
+      marked: false,
+      storageKey: "pages",
     };
 
-    dispatch(addItem(pageContent));
+    dispatch(addPage(pageContent));
     dispatch(closeModal());
-    console.log(pageContent.id);
   };
 
   const handleTextareaChange = (e) => {

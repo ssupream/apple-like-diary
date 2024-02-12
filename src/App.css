@@ -28,7 +28,13 @@
 
 .container {
   display: flex;
+  flex-direction: row-reverse;
   height: 100vh;
+}
+
+.journal h1 {
+  font-size: 2em;
+  margin: 0.4em 0 1em 0.3em;
 }
 
 .nav-bar {
@@ -36,7 +42,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1em 0.25em 1em 0.5em;
+  margin: 1em 0em 1em 0.5em;
   padding: 0.5em;
   border-radius: 1em;
 }
@@ -46,6 +52,7 @@
   display: flex;
   align-items: center;
   text-align: center;
+  margin: 0.2em 0;
 }
 
 .add {
@@ -74,11 +81,34 @@
 
 .nav-bar button:focus {
   outline: solid 1px;
+  border-radius: 35%;
 }
 
 .nav-bar button:active {
   background: rgb(139, 81, 233);
   font-size: 3em;
+  border-radius: 35%;
+}
+
+.nav-buttons {
+  height: 4rem;
+  width: 4rem;
+  background: none;
+  border: none;
+  font-size: 2em;
+  color: hsla(0, 0%, 100%, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-buttons:hover {
+  color: #f1f5f8;
+}
+
+.nav-buttons:focus {
+  color: #fff;
+  background: hsla(0, 0%, 100%, 0.3);
 }
 
 .journal {
@@ -97,10 +127,6 @@
   max-height: 100vh;
 }
 
-.journal h1 {
-  margin: 1em 0 2em 0;
-}
-
 .no-pages {
   justify-content: center;
   color: rgba(255, 255, 255, 0.6);
@@ -110,7 +136,7 @@
   display: flex;
   flex-direction: column;
   max-height: 330px;
-  width: 500px;
+  width: clamp(350px, 70vw, 500px);
   margin: var(--spacing);
   border-radius: 1em;
   background: var(--primary-light);
@@ -144,6 +170,12 @@
   align-items: center;
 }
 
+.container-card {
+  justify-content: center;
+  width: auto;
+  position: relative;
+}
+
 .date {
   display: flex;
   align-items: center;
@@ -158,6 +190,10 @@
   font-size: 2.5em;
   cursor: pointer;
   padding-bottom: 6px;
+}
+
+.button-section button {
+  color: var(--primary-light);
 }
 
 .modal-container {
@@ -218,23 +254,36 @@
 }
 
 .drop-down-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 4em;
+  right: 0;
+  margin: var(--spacing);
   background: var(--primary-light);
   box-shadow: 0 10px 50px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(30px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   list-style: none;
-  width: 20em;
+  width: 25em;
+  height: 12em;
   border-radius: 0.8em;
-  position: fixed;
-  left: 0em;
-  top: 0em;
   z-index: 1000;
+  font-size: 0.6em;
 }
 
 .drop-down-menu button {
   background: none;
   border: none;
   font-size: 1.8em;
+  height: 100%;
+  color: black;
+  text-align: start;
+  padding: 0 0.4em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .drop-menu-hidden {
@@ -250,22 +299,11 @@
 }
 
 .drop-down-menu > :nth-child(2) {
-  border-bottom: solid 1em rgba(255, 255, 255, 0.4);
+  border-bottom: solid 0.4em rgba(255, 255, 255, 0.4);
 }
 
-.drop-down-menu > :nth-child(3) button {
+.drop-down-menu > :nth-child(3) {
   color: rgb(201, 0, 0);
-}
-
-.drop-down-menu li {
-  width: 100%;
-  list-style: none;
-  padding: 1em;
-  font-size: 0.6em;
-}
-
-.drop-down-menu li button {
-  color: black;
 }
 
 .button-section {
@@ -276,7 +314,57 @@
   justify-content: end;
 }
 
-.drop-down-menu li:hover {
+.drop-down-menu button:hover {
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .add {
+    height: 5rem;
+    width: 5rem;
+    font-size: 3.2em;
+    position: absolute;
+    bottom: 0.3em;
+  }
+  .nav-bar {
+    height: 70px;
+    position: relative;
+    margin: 0.2em 0;
+  }
+  .journal {
+    margin: 0;
+    height: 100%;
+  }
+  .container {
+    margin: 0 0.4em;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pages-container {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(auto-fit(1fr));
+    gap: var(--spacing);
+    padding: 0 var(--spacing);
+  }
+  .card-container {
+    height: 100%;
+  }
+  .card {
+    height: auto;
+  }
+}
+
+@media screen and (min-width: 1700px) {
+  .pages-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

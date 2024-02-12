@@ -1,7 +1,7 @@
 import Journal from "./components/Journal";
 import Navbar from "./components/Navbar";
 import Modal from "./components/Modal";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import "./App.css";
 
@@ -10,8 +10,9 @@ function App() {
   return (
     <main className="container">
       {isOpen && <Modal />}
-      <Navbar />
+
       <Journal />
+      <Navbar />
     </main>
   );
 }

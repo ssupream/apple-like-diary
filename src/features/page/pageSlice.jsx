@@ -1,42 +1,84 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useState } from "react";
 
-const pagesStorage =
-  localStorage.getItem("pages") !== null
-    ? JSON.parse(localStorage.getItem("pages"))
-    : [];
+const getStorageKey = (key) => `${key}`;
+
+const loadPagesFromStorage = (key) => {
+  const pagesStorage = localStorage.getItem(getStorageKey(key));
+  return pagesStorage ? JSON.parse(pagesStorage) : [];
+};
 
 const initialState = {
-  pages: pagesStorage,
+  pages: loadPagesFromStorage("pages"),
   total: 0,
-  flaggedPages: [],
   flagged: 0,
   isLoading: true,
 };
+
+console.log(initialState.markedPages);
 
 const pageSlice = createSlice({
   name: "page",
   initialState,
   reducers: {
-    addItem: (state, { payload }) => {
+    addPage: (state, { payload }) => {
       if (payload.text) {
         state.pages.push(payload);
       } else {
         return;
       }
       localStorage.setItem(
-        "pages",
+        getStorageKey(payload.storageKey),
         JSON.stringify(state.pages.map((page) => page))
       );
     },
+
+    markPage: (state, { payload }) => {
+      const cardId = payload.id;
+      const page = state.pages.find((page) => page.id === cardId);
+      if (page) {
+        const marked = page.marked;
+        page.marked = !marked;
+      }
+      localStorage.setItem(
+        getStorageKey(payload.storageKey),
+        JSON.stringify(state.pages)
+      );
+    },
+
+    renderPages: (state) => {
+      state.pages = loadPagesFromStorage("pages");
+    },
+
+    renderMarked: (state) => {
+      state.pages = state.pages.filter((page) => page.marked === true);
+    },
+
+    deleteCard: (state, { payload }) => {
+      const cardId = payload.id;
+      state.pages = state.pages.filter((page) => page.id !== cardId);
+      localStorage.setItem(getStorageKey("pages"), JSON.stringify(state.pages));
+    },
     openDropDownMenu: (state, { payload }) => {
-      // const openMenus = state.pages.map((page) => (page.openMenu = false));
       const itemId = payload;
       const page = state.pages.find((page) => page.id === itemId);
       const openMenuState = page.openMenu;
       page.openMenu = !openMenuState;
+      localStorage.setItem(getStorageKey("pages"), JSON.stringify(state.pages));
+    },
+    closeDropDownMenu: (state) => {
+      state.pages.map((page) => (page.openMenu = false));
     },
   },
 });
 
-export const { addItem, openDropDownMenu } = pageSlice.actions;
+export const {
+  addPage,
+  markPage,
+  renderPages,
+  renderMarked,
+  openDropDownMenu,
+  closeDropDownMenu,
+  deleteCard,
+} = pageSlice.actions;
 export default pageSlice.reducer;
