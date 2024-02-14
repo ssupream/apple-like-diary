@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useState } from "react";
 
 const getStorageKey = (key) => `${key}`;
 
@@ -61,13 +60,16 @@ const pageSlice = createSlice({
     },
     openDropDownMenu: (state, { payload }) => {
       const itemId = payload;
-      const page = state.pages.find((page) => page.id === itemId);
-      const openMenuState = page.openMenu;
-      page.openMenu = !openMenuState;
-      localStorage.setItem(getStorageKey("pages"), JSON.stringify(state.pages));
+      state.pages.forEach((page) => {
+        if (itemId === page.id) {
+          const open = page.openMenu;
+          page.openMenu = !open;
+        } else page.openMenu = false;
+      });
     },
+
     closeDropDownMenu: (state) => {
-      state.pages.map((page) => (page.openMenu = false));
+      state.pages.forEach((page) => (page.openMenu = false));
     },
   },
 });

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { nanoid } from "nanoid";
 
 const Journal = () => {
-  const { pages, markedPages } = useSelector((store) => store.page);
+  const { pages } = useSelector((store) => store.page);
   const hasPages = pages.length <= 0;
 
   return (

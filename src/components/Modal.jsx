@@ -2,10 +2,11 @@ import React from "react";
 import { closeModal } from "../features/modal/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addPage } from "../features/page/pageSlice";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Modal = () => {
-  const { pages } = useSelector((store) => store.page);
+  const { pages, edit } = useSelector((store) => store.page);
+  const { isOpen } = useSelector((store) => store.modal);
   const id = pages.length + 1;
 
   const currentDate = new Date();
@@ -34,6 +35,7 @@ const Modal = () => {
   ];
 
   const [entryText, setEntryText] = useState();
+  const [openAnimation, setOpenAnimation] = useState(false);
   const dayName = dayNames[currentDate.getDay()];
   const monthName = monthNames[currentDate.getMonth()];
   const savedDate = {
@@ -43,18 +45,27 @@ const Modal = () => {
   };
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setTimeout(() => {
+      setOpenAnimation(true);
+    }, 1);
+  }, []);
+
   const handleDoneClick = () => {
     const pageContent = {
       date: savedDate,
       text: entryText,
       id: id,
-      openMenu: false,
       marked: false,
       storageKey: "pages",
+      openMenu: false,
     };
 
     dispatch(addPage(pageContent));
-    dispatch(closeModal());
+    setOpenAnimation(false);
+    setTimeout(() => {
+      dispatch(closeModal());
+    }, 300);
   };
 
   const handleTextareaChange = (e) => {
@@ -62,8 +73,8 @@ const Modal = () => {
   };
 
   return (
-    <main className="modal-container">
-      <div className="modal">
+    <main className={`modal-container ${openAnimation ? "open" : ""}`}>
+      <div className={`modal ${openAnimation ? "open" : ""}`}>
         <div className="top-section">
           <h1>New entry</h1>
           <div className="date">{`

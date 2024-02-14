@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isOpen: false,
+  edit: null,
 };
 
 const modalSlice = createSlice({
@@ -13,6 +14,11 @@ const modalSlice = createSlice({
     },
     closeModal: (state, action) => {
       state.isOpen = false;
+    },
+    edit: (state, { payload }) => {
+      const cardId = payload.id;
+      const page = state.pages.filter((page) => page.id === cardId);
+      state.edit = page;
     },
   },
 });
