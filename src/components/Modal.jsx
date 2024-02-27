@@ -1,13 +1,15 @@
 import React from "react";
 import { closeModal } from "../features/modal/modalSlice";
+import { clearEdit } from "../features/page/pageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addPage } from "../features/page/pageSlice";
 import { useState, useEffect } from "react";
 
 const Modal = () => {
   const { pages, edit } = useSelector((store) => store.page);
-  const { isOpen } = useSelector((store) => store.modal);
-  const id = pages.length + 1;
+  const lengthPages = pages.length;
+  const id = edit.id <= 0 ? edit.id : lengthPages;
+  console.log(id);
 
   const currentDate = new Date();
   const dayNames = [
@@ -34,11 +36,12 @@ const Modal = () => {
     "Dec",
   ];
 
-  const [entryText, setEntryText] = useState();
+  const [entryText, setEntryText] = useState([] && edit.text);
   const [openAnimation, setOpenAnimation] = useState(false);
   const dayName = dayNames[currentDate.getDay()];
   const monthName = monthNames[currentDate.getMonth()];
   const savedDate = {
+    edited: edit.id ? "Edited last on: " : "",
     day: dayName,
     dayN: currentDate.getDate(),
     month: monthName,
@@ -60,8 +63,12 @@ const Modal = () => {
       storageKey: "pages",
       openMenu: false,
     };
-
-    dispatch(addPage(pageContent));
+    if (edit.text) {
+      dispatch(addPage(pageContent));
+      dispatch(clearEdit());
+    } else {
+      dispatch(addPage(pageContent));
+    }
     setOpenAnimation(false);
     setTimeout(() => {
       dispatch(closeModal());
@@ -76,7 +83,7 @@ const Modal = () => {
     <main className={`modal-container ${openAnimation ? "open" : ""}`}>
       <div className={`modal ${openAnimation ? "open" : ""}`}>
         <div className="top-section">
-          <h1>New entry</h1>
+          <h1>{`${edit.text ? "" : "New entry"}`}</h1>
           <div className="date">{`
           ${dayName},
           ${currentDate.getDate()} 
@@ -87,6 +94,7 @@ const Modal = () => {
           placeholder="Start writing..."
           value={entryText}
           onChange={handleTextareaChange}
+          autoFocus={true}
         ></textarea>
       </div>
     </main>

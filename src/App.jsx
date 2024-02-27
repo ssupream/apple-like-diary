@@ -7,8 +7,10 @@ import "./App.css";
 
 function App() {
   const { isOpen } = useSelector((store) => store.modal);
+  const { theme } = useSelector((store) => store.theme);
+
   return (
-    <main className="container">
+    <main className={`container ${theme}`}>
       {isOpen && <Modal />}
 
       <Journal />

@@ -2,7 +2,9 @@ import {
   deleteCard,
   closeDropDownMenu,
   markPage,
+  editContent,
 } from "../features/page/pageSlice";
+import { openModal } from "../features/modal/modalSlice";
 import { useDispatch } from "react-redux";
 import { IoTrashOutline } from "react-icons/io5";
 import { IoBookmarkOutline } from "react-icons/io5";
@@ -18,7 +20,13 @@ const DropDownMenu = ({ openMenu, id, marked }) => {
   };
   return (
     <div className={`${openMenu ? "drop-down-menu " : "drop-menu-hidden"}`}>
-      <button>
+      <button
+        onClick={() => {
+          dispatch(closeDropDownMenu());
+          dispatch(openModal());
+          dispatch(editContent({ id }));
+        }}
+      >
         Edit
         <MdEdit />
       </button>

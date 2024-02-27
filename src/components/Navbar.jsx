@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "../features/modal/modalSlice";
 import {
   closeDropDownMenu,
@@ -8,20 +8,24 @@ import {
 } from "../features/page/pageSlice";
 import { IoBookmark } from "react-icons/io5";
 import { IoIosJournal } from "react-icons/io";
+import { IoMdAdd } from "react-icons/io";
+import { FaToggleOn, FaToggleOff } from "react-icons/fa";
+import { toggle } from "../features/theme/themeSlice";
 
 const Navbar = () => {
+  const { theme } = useSelector((store) => store.theme);
   const dispatch = useDispatch();
+
   return (
     <nav className="nav-bar">
-      <h1></h1>
       <button
-        className="button add"
+        className="nav-buttons add"
         onClick={() => {
           dispatch(openModal());
           dispatch(closeDropDownMenu());
         }}
       >
-        <span className="plus-sign">+</span>
+        <IoMdAdd />
       </button>
       <button
         className="nav-buttons"
@@ -40,6 +44,16 @@ const Navbar = () => {
         }}
       >
         <IoBookmark />
+      </button>
+      <button
+        id="theme-toggle"
+        className="nav-buttons"
+        onClick={() => {
+          dispatch(toggle());
+          console.log(theme);
+        }}
+      >
+        {theme === "dark" ? <FaToggleOn /> : <FaToggleOff />}
       </button>
     </nav>
   );

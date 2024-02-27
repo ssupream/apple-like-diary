@@ -9,6 +9,7 @@ const loadPagesFromStorage = (key) => {
 
 const initialState = {
   pages: loadPagesFromStorage("pages"),
+  edit: [],
   total: 0,
   flagged: 0,
   isLoading: true,
@@ -21,15 +22,33 @@ const pageSlice = createSlice({
   initialState,
   reducers: {
     addPage: (state, { payload }) => {
-      if (payload.text) {
-        state.pages.push(payload);
-      } else {
+      const cardId = payload.id;
+      const existingPageId = state.pages.findIndex(
+        (page) => page.id === cardId
+      );
+      console.log(`Card ID: ${cardId}, Existing Page ID: ${existingPageId}`);
+
+      if (!payload.text) {
         return;
+      } else if (existingPageId === cardId) {
+        state.pages[existingPageId] = payload;
+      } else {
+        state.pages.push(payload);
       }
       localStorage.setItem(
         getStorageKey(payload.storageKey),
         JSON.stringify(state.pages.map((page) => page))
       );
+    },
+    editContent: (state, { payload }) => {
+      const cardId = payload.id;
+      const page = state.pages.filter((page) => cardId === page.id);
+      state.edit = page[0];
+      console.log(`Edit ID: ${state.edit.id}`);
+    },
+
+    clearEdit: (state) => {
+      state.edit = [];
     },
 
     markPage: (state, { payload }) => {
@@ -82,5 +101,7 @@ export const {
   openDropDownMenu,
   closeDropDownMenu,
   deleteCard,
+  editContent,
+  clearEdit,
 } = pageSlice.actions;
 export default pageSlice.reducer;

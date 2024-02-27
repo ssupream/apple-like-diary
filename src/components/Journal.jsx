@@ -9,15 +9,18 @@ const Journal = () => {
 
   return (
     <main className={`${hasPages ? "journal no-pages" : " journal"}`}>
-      <h1 style={{ margin: hasPages ? "0px" : "1em 0 2em 0" }}>JOURNAL</h1>
-      <div className="pages-container">
-        {hasPages ? <span></span> : null}
-        {pages
-          .slice()
-          .reverse()
-          .map((page) => {
-            return <Page key={nanoid()} {...page} />;
-          })}
+      <div className="journal-container">
+        <h1 style={{ margin: hasPages ? "0px" : "1em 0 2em 0em" }}>JOURNAL</h1>
+
+        <div className="pages-container">
+          {hasPages ? <span></span> : null}
+          {pages
+            .slice()
+            .reverse()
+            .map((page) => {
+              return <Page key={nanoid()} {...page} />;
+            })}
+        </div>
       </div>
     </main>
   );
