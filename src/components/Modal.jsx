@@ -4,12 +4,13 @@ import { clearEdit } from "../features/page/pageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addPage } from "../features/page/pageSlice";
 import { useState, useEffect } from "react";
+import { nanoid } from "nanoid";
 
 const Modal = () => {
-  const { pages, edit } = useSelector((store) => store.page);
-  const lengthPages = pages.length;
-  const id = edit.id <= 0 ? edit.id : lengthPages;
-  console.log(id);
+  const { edit } = useSelector((store) => store.page);
+  const pageId = nanoid();
+  const id = edit.id ? edit.id : pageId;
+  console.log(`Current ID value: ${id}`);
 
   const currentDate = new Date();
   const dayNames = [
@@ -61,7 +62,6 @@ const Modal = () => {
       id: id,
       marked: false,
       storageKey: "pages",
-      openMenu: false,
     };
     if (edit.text) {
       dispatch(addPage(pageContent));

@@ -112,7 +112,6 @@ body {
   flex-direction: column;
   align-items: center;
   margin-left: 82px;
-  /* background: var(--clr-grad); */
   width: 100%;
   overflow: auto;
   max-height: 100vh;
@@ -124,7 +123,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 160px;
+  height: 120px;
   mask: linear-gradient(0deg, black, black, transparent);
   backdrop-filter: blur(8px);
   z-index: 3;
@@ -139,16 +138,24 @@ body {
   justify-content: center;
 }
 
+.no-pages h1 {
+  text-align: center;
+}
+
 .pages-container {
   margin-bottom: 120px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-rows: masonry;
 }
 
 .card {
+  break-inside: avoid;
   display: flex;
   flex-direction: column;
-  max-height: 330px;
-  width: clamp(350px, 70vw, 500px);
-  margin: 0.8em 0em;
+  justify-content: space-between;
+  width: clamp(350px, 70vw, 600px);
+  margin: 0.5em 0;
   border-radius: 1em;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   background: var(--clr-primary);
@@ -159,23 +166,30 @@ body {
   transition: filter 0.2s ease-in-out;
 }
 
+.content {
+  white-space: pre-line;
+}
+
 .card .content {
-  max-height: 245px;
   margin: 1em;
   color: var(--clr-contrast);
   overflow: hidden;
 }
 
 .content p {
+  text-justify: auto;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
 }
 
+.expandCard {
+  -webkit-line-clamp: 5;
+}
+
 .card .date {
-  height: 30px;
+  height: 35px;
   width: auto;
   border-top: solid 1px var(--clr-secondary-contrast);
   color: var(--clr-contrast);
@@ -186,8 +200,8 @@ body {
 }
 
 .container-card {
+  display: flex;
   justify-content: center;
-  width: auto;
   position: relative;
 }
 
@@ -202,11 +216,13 @@ body {
   color: var(--clr-contrast);
   justify-content: space-between;
   padding: 0 1em;
+  overflow: hidden;
 }
 
 .date button {
   background: none;
   border: none;
+  height: auto;
   color: var(--clr-white-06);
   font-size: 2.5em;
   cursor: pointer;
@@ -215,7 +231,7 @@ body {
 
 .button-section button {
   color: var(--clr-contrast);
-  z-index: 2;
+  z-index: 3;
 }
 
 .modal-container {
@@ -265,7 +281,7 @@ body {
 .modal textarea {
   background: none;
   width: 100%;
-  height: 70%;
+  height: 100%;
   color: var(--clr-contrast);
   outline: none;
   border: none;
@@ -361,9 +377,10 @@ body {
   cursor: pointer;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
   .container {
     flex-direction: column;
+    margin: 0;
   }
   .journal::after {
     display: none;
@@ -375,7 +392,7 @@ body {
     flex-direction: row;
     justify-content: space-around;
     align-items: end;
-    height: 160px;
+    height: 120px;
     width: 100%;
     bottom: 0;
     left: 0;
@@ -390,39 +407,28 @@ body {
     border-radius: 0;
     position: relative;
   }
-  .container {
-    margin: 0;
-  }
 }
 
 @media screen and (min-width: 900px) {
   .pages-container {
-    display: grid;
     align-items: center;
     justify-content: center;
-    grid-template-columns: repeat(2, 1fr);
     gap: 1em;
   }
   .journal-container {
-    margin: 0 1em 0 1em;
+    padding: 0 1em 0 1em;
+    width: 100%;
+  }
+  .container-card {
+    height: 100%;
   }
   .card {
     width: clamp(300px, 100%, 100%);
-  }
-  .container-card {
-    display: flex;
-    align-items: center;
-  }
-
-  .card {
     margin: 0;
-  }
-  .card .content {
-    height: 100px;
   }
 }
 
-@media screen and (min-width: 1100px) {
+/* @media screen and (min-width: 1100px) {
   .pages-container {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -432,4 +438,4 @@ body {
   .pages-container {
     grid-template-columns: repeat(4, 1fr);
   }
-}
+} */

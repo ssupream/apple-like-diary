@@ -15,26 +15,26 @@ const initialState = {
   isLoading: true,
 };
 
-console.log(initialState.markedPages);
-
 const pageSlice = createSlice({
   name: "page",
   initialState,
   reducers: {
     addPage: (state, { payload }) => {
       const cardId = payload.id;
-      const existingPageId = state.pages.findIndex(
-        (page) => page.id === cardId
+      const existingPage = state.pages.find((page) => page.id === cardId);
+      const pageIndex = state.pages.findIndex((page) => page === existingPage);
+      console.log(
+        `Card ID: ${cardId}, Existing Page ID: ${existingPage?.id}, page index: ${pageIndex}`
       );
-      console.log(`Card ID: ${cardId}, Existing Page ID: ${existingPageId}`);
 
-      if (!payload.text) {
+      if (payload.text === existingPage?.text) {
         return;
-      } else if (existingPageId === cardId) {
-        state.pages[existingPageId] = payload;
-      } else {
-        state.pages.push(payload);
+      } else if (existingPage?.id === cardId) {
+        state.pages.splice(pageIndex, 1);
       }
+
+      state.pages.push(payload);
+
       localStorage.setItem(
         getStorageKey(payload.storageKey),
         JSON.stringify(state.pages.map((page) => page))
@@ -42,8 +42,8 @@ const pageSlice = createSlice({
     },
     editContent: (state, { payload }) => {
       const cardId = payload.id;
-      const page = state.pages.filter((page) => cardId === page.id);
-      state.edit = page[0];
+      const page = state.pages.find((page) => cardId === page.id);
+      state.edit = page;
       console.log(`Edit ID: ${state.edit.id}`);
     },
 
@@ -83,12 +83,19 @@ const pageSlice = createSlice({
         if (itemId === page.id) {
           const open = page.openMenu;
           page.openMenu = !open;
-        } else page.openMenu = false;
+        } else delete page?.openMenu;
       });
     },
 
     closeDropDownMenu: (state) => {
-      state.pages.forEach((page) => (page.openMenu = false));
+      state.pages.forEach((page) => delete page.openMenu);
+    },
+    expandCard: (state, { payload }) => {
+      const { id } = payload;
+      const page = state.pages.find((page) => page.id === id);
+      if (page) {
+        page.isExpanded = !page.isExpanded;
+      } else delete page?.isExpanded;
     },
   },
 });
@@ -103,5 +110,6 @@ export const {
   deleteCard,
   editContent,
   clearEdit,
+  expandCard,
 } = pageSlice.actions;
 export default pageSlice.reducer;

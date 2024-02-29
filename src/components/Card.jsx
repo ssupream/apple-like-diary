@@ -2,17 +2,23 @@ import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { openDropDownMenu } from "../features/page/pageSlice";
 import DropDownMenu from "./DropDownMenu";
+import { expandCard } from "../features/page/pageSlice";
 
-const Page = ({ openMenu, id, date, text, marked }) => {
+const Page = ({ openMenu, id, date, text, marked, isExpanded }) => {
   const dispatch = useDispatch();
   const buttonRef = useRef(null);
 
   return (
     <article>
       <div className="container-card">
-        <div className="card">
+        <div
+          className="card"
+          onClick={() => {
+            dispatch(expandCard({ id }));
+          }}
+        >
           <div className="content">
-            <p>{text}</p>
+            <p className={`${isExpanded ? "" : "expandCard"}`}>{text}</p>
           </div>
           <div className="date">
             <span className="date-var">
@@ -23,7 +29,6 @@ const Page = ({ openMenu, id, date, text, marked }) => {
               <button
                 ref={buttonRef}
                 onClick={() => {
-                  // dispatch(closeDropDownMenu());
                   dispatch(openDropDownMenu(id));
                 }}
               >
