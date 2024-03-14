@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { closeModal } from "../features/modal/modalSlice";
 import { clearEdit } from "../features/page/pageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addPage } from "../features/page/pageSlice";
-import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
+import { storage } from "../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
 const Modal = () => {
   const { edit } = useSelector((store) => store.page);
+  const [images, setImages] = useState(null);
+  const [imageList, setImageList] = useState([]);
   const pageId = nanoid();
   const id = edit.id ? edit.id : pageId;
   console.log(`Current ID value: ${id}`);
@@ -48,31 +51,65 @@ const Modal = () => {
     month: monthName,
   };
   const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
+
+  const handleImageUpload = (e) => {
+    const files = e.target.files;
+    const selectedImages = Array.from(files);
+    setImages(selectedImages);
+  };
 
   useEffect(() => {
+    listAll();
     setTimeout(() => {
       setOpenAnimation(true);
     }, 1);
   }, []);
 
-  const handleDoneClick = () => {
-    const pageContent = {
-      date: savedDate,
-      text: entryText,
-      id: id,
-      marked: false,
-      storageKey: "pages",
-    };
-    if (edit.text) {
-      dispatch(addPage(pageContent));
-      dispatch(clearEdit());
-    } else {
-      dispatch(addPage(pageContent));
-    }
-    setOpenAnimation(false);
-    setTimeout(() => {
-      dispatch(closeModal());
-    }, 300);
+  const handleDoneClick = async () => {
+    const uploadedImageUrls = [];
+    const promises = images?.map((image) => {
+      const imageRef = ref(storage, `images/${image.name}`);
+      return uploadBytes(imageRef, image)
+        .then(() => {
+          console.log(`Image ${image.name} uploaded successfully`);
+          return getDownloadURL(imageRef).then((url) => {
+            uploadedImageUrls.push(url);
+          });
+        })
+        .catch((error) => {
+          console.error(`Error uploading image ${image.name}:`, error);
+        });
+    });
+
+    Promise.all(promises)
+      .then(() => {
+        console.log("Image URLs:", uploadedImageUrls);
+
+        const pageContent = {
+          storageKey: "pages",
+          img: uploadedImageUrls,
+          text: entryText,
+          date: savedDate,
+          id: id,
+          marked: false,
+        };
+        if (edit.text) {
+          dispatch(addPage(pageContent));
+          dispatch(clearEdit());
+        } else {
+          dispatch(addPage(pageContent));
+        }
+        setTimeout(() => {
+          dispatch(closeModal());
+        }, 1000);
+        setOpenAnimation(false);
+        // setImageList([]);
+        // setImages(null);
+      })
+      .catch((error) => {
+        console.error("Error uploading images:", error);
+      });
   };
 
   const handleTextareaChange = (e) => {
@@ -90,6 +127,27 @@ const Modal = () => {
           ${monthName}`}</div>
           <button onClick={handleDoneClick}>Done</button>
         </div>
+        <div className="images-container">
+          {images &&
+            images.map((image, index) => (
+              <img
+                key={index}
+                src={URL.createObjectURL(image)}
+                alt={`Selected ${index}`}
+                className="upload-image"
+              />
+            ))}
+        </div>
+        <input
+          style={{ display: "none" }}
+          type="file"
+          name="image"
+          onChange={handleImageUpload}
+          ref={fileInputRef}
+          accept="image/*"
+          multiple
+        />
+        <button onClick={() => fileInputRef.current.click()}>Pick File</button>
         <textarea
           placeholder="Start writing..."
           value={entryText}

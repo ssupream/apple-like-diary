@@ -12,7 +12,7 @@ const Journal = () => {
       <div className="journal-container">
         <h1 style={{ margin: hasPages ? "0px" : "1em 0 2em 0em" }}>JOURNAL</h1>
         <div className="pages-container">
-          {hasPages ? <span></span> : null}
+          {/* {hasPages ? <span>I might use it later</span> : null} */}
           {pages
             .slice()
             .reverse()

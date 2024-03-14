@@ -13,6 +13,7 @@ const initialState = {
   total: 0,
   flagged: 0,
   isLoading: true,
+  isExpanded: false,
 };
 
 const pageSlice = createSlice({
@@ -95,7 +96,8 @@ const pageSlice = createSlice({
       const page = state.pages.find((page) => page.id === id);
       if (page) {
         page.isExpanded = !page.isExpanded;
-      } else delete page?.isExpanded;
+      }
+      // else delete page?.isExpanded;
     },
   },
 });

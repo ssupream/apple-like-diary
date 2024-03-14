@@ -14,11 +14,11 @@
 
   /* Dark theme colors */
   --clr-background-dark: rgb(20, 20, 20);
-  --primary-dark: rgba(20, 20, 20, 0.6);
+  --primary-dark: rgba(85, 85, 85, 0.4);
   --border-dark: rgba(73, 73, 73, 0.1);
-  --primary-dark-contrast: rgba(255, 255, 255, 0.6);
+  --primary-dark-contrast: rgba(255, 255, 255, 0.8);
   --secondary-dark-contrast: rgba(255, 255, 255, 0.1);
-  --grd-dark: linear-gradient(0deg, rgb(70, 26, 43) 0%, rgb(21, 14, 56) 100%);
+  --grd-dark: linear-gradient(0deg, rgb(92, 57, 101) 0%, rgb(9, 11, 24) 100%);
 
   /* Light theme colors */
   --clr-background-light: #e6e6e6;
@@ -150,42 +150,46 @@ body {
 }
 
 .card {
+  border-radius: 1em;
   break-inside: avoid;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: clamp(350px, 70vw, 600px);
   margin: 0.5em 0;
-  border-radius: 1em;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   background: var(--clr-primary);
   backdrop-filter: blur(30px);
   border: 1px solid var(--clr-border);
   position: relative;
   z-index: 1;
-  transition: filter 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-content {
+  margin-top: 1em;
   white-space: pre-line;
+  text-justify: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.expand-text {
+  -webkit-line-clamp: none;
 }
 
 .card .content {
   margin: 1em;
   color: var(--clr-contrast);
   overflow: hidden;
-}
-
-.content p {
-  text-justify: auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-}
-
-.expandCard {
-  -webkit-line-clamp: 5;
 }
 
 .card .date {
@@ -265,6 +269,9 @@ body {
   bottom: -130%;
   opacity: 1;
   transform: translateY(100%);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal.open {
@@ -278,15 +285,48 @@ body {
   font-size: clamp(1em, calc(1vw + 1em), 2em);
 }
 
+.images-container {
+  height: 250px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 0px;
+  overflow: hidden;
+  margin-bottom: 1em;
+  overflow-x: scroll;
+}
+.upload-image {
+  margin: 0 0.1em;
+  /* object-fit: cover; */
+  /* width: 200px; */
+}
+
+.image-cards {
+  display: flex;
+  overflow: hidden;
+  overflow-x: auto;
+  gap: 0.5em;
+  max-height: 300px;
+  border-radius: 0.5em;
+}
+
+.image-inside-card {
+  border-radius: 0.5em;
+  width: 100%;
+  object-fit: cover;
+}
+
 .modal textarea {
   background: none;
   width: 100%;
-  height: 100%;
+  min-height: clamp(200px, auto, 1000px);
+  margin: 1em 0;
   color: var(--clr-contrast);
   outline: none;
   border: none;
   font-size: 1.4em;
   resize: none;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .modal .top-section {
