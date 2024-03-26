@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { BsImages } from "react-icons/bs";
+import { GrDocumentMissing } from "react-icons/gr";
 import { closeModal } from "../features/modal/modalSlice";
 import { clearEdit } from "../features/page/pageSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,8 +11,8 @@ import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
 const Modal = () => {
   const { edit } = useSelector((store) => store.page);
-  const [images, setImages] = useState(null);
-  const [imageList, setImageList] = useState([]);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const pageId = nanoid();
   const id = edit.id ? edit.id : pageId;
   console.log(`Current ID value: ${id}`);
@@ -40,7 +42,7 @@ const Modal = () => {
     "Dec",
   ];
 
-  const [entryText, setEntryText] = useState([] && edit.text);
+  const [entryText, setEntryText] = useState("");
   const [openAnimation, setOpenAnimation] = useState(false);
   const dayName = dayNames[currentDate.getDay()];
   const monthName = monthNames[currentDate.getMonth()];
@@ -56,6 +58,7 @@ const Modal = () => {
   const handleImageUpload = (e) => {
     const files = e.target.files;
     const selectedImages = Array.from(files);
+    console.log(selectedImages);
     setImages(selectedImages);
   };
 
@@ -66,50 +69,65 @@ const Modal = () => {
     }, 1);
   }, []);
 
+  useEffect(() => {
+    setEntryText(edit.text || "");
+  }, [edit]);
+
   const handleDoneClick = async () => {
-    const uploadedImageUrls = [];
-    const promises = images?.map((image) => {
-      const imageRef = ref(storage, `images/${image.name}`);
-      return uploadBytes(imageRef, image)
-        .then(() => {
-          console.log(`Image ${image.name} uploaded successfully`);
-          return getDownloadURL(imageRef).then((url) => {
-            uploadedImageUrls.push(url);
-          });
-        })
-        .catch((error) => {
-          console.error(`Error uploading image ${image.name}:`, error);
-        });
-    });
+    setLoading(true);
 
-    Promise.all(promises)
-      .then(() => {
-        console.log("Image URLs:", uploadedImageUrls);
+    let uploadedImageUrls = [];
 
-        const pageContent = {
-          storageKey: "pages",
-          img: uploadedImageUrls,
-          text: entryText,
-          date: savedDate,
-          id: id,
-          marked: false,
-        };
-        if (edit.text) {
-          dispatch(addPage(pageContent));
-          dispatch(clearEdit());
-        } else {
-          dispatch(addPage(pageContent));
-        }
-        setTimeout(() => {
-          dispatch(closeModal());
-        }, 1000);
-        setOpenAnimation(false);
-        // setImageList([]);
-        // setImages(null);
-      })
-      .catch((error) => {
+    if (images) {
+      try {
+        uploadedImageUrls = await Promise.all(
+          images.map(async (image) => {
+            const imageRef = ref(storage, `images/${image.name}`);
+            await uploadBytes(imageRef, image);
+            const url = await getDownloadURL(imageRef);
+            console.log(`Image ${image.name} uploaded successfully`);
+            return url;
+          })
+        );
+      } catch (error) {
         console.error("Error uploading images:", error);
-      });
+        setLoading(false);
+        return;
+      }
+    }
+
+    const imagesAddedDuringEdit = images && images.length > 0;
+    console.log(imagesAddedDuringEdit);
+
+    let updatedImages;
+    if (imagesAddedDuringEdit) {
+      updatedImages = [...uploadedImageUrls, ...(edit.img || [])];
+    } else {
+      updatedImages = edit.img || [];
+    }
+
+    const pageContent = {
+      storageKey: "pages",
+      img: updatedImages,
+      text: entryText,
+      date: savedDate,
+      id: id,
+      marked: false,
+    };
+
+    if (edit) {
+      console.log("loading...");
+      dispatch(addPage(pageContent));
+      dispatch(clearEdit());
+    }
+
+    dispatch(addPage(pageContent));
+
+    setTimeout(() => {
+      dispatch(closeModal());
+    }, 100);
+    setOpenAnimation(false);
+    setImages([]);
   };
 
   const handleTextareaChange = (e) => {
@@ -119,24 +137,48 @@ const Modal = () => {
   return (
     <main className={`modal-container ${openAnimation ? "open" : ""}`}>
       <div className={`modal ${openAnimation ? "open" : ""}`}>
+        {loading && <div className="modal-loading">Loading...</div>}
         <div className="top-section">
-          <h1>{`${edit.text ? "" : "New entry"}`}</h1>
+          <div className="top-section-actions">
+            <h1>{`${edit.text ? "Edit" : "New entry"}`}</h1>
+            <button
+              className="image-picker-button"
+              onClick={() => fileInputRef.current.click()}
+            >
+              <BsImages />
+            </button>
+          </div>
+
           <div className="date">{`
           ${dayName},
           ${currentDate.getDate()} 
           ${monthName}`}</div>
-          <button onClick={handleDoneClick}>Done</button>
+          <button className="modal-done-button" onClick={handleDoneClick}>
+            Done
+          </button>
         </div>
-        <div className="images-container">
-          {images &&
-            images.map((image, index) => (
-              <img
-                key={index}
-                src={URL.createObjectURL(image)}
-                alt={`Selected ${index}`}
-                className="upload-image"
-              />
-            ))}
+        <div
+          className={`${images > 0 || edit.img > 0 ? "images-container" : ""}`}
+        >
+          {(images || []).map((image, index) => (
+            <img
+              key={`selected-${index}`}
+              src={URL.createObjectURL(image)}
+              alt={`Selected ${index}-missing`}
+              className="selected-images"
+            />
+          ))}
+          {(edit.img || []).map((image, index) => (
+            <img
+              key={`edit-${index}`}
+              src={image}
+              alt={`${(<GrDocumentMissing />)} ${index}-missing`}
+              className="selected-images"
+            />
+          ))}
+          {/* {(!images || !edit.img) && (
+            <p className="no-image">No images selected</p>
+          )} */}
         </div>
         <input
           style={{ display: "none" }}
@@ -147,8 +189,9 @@ const Modal = () => {
           accept="image/*"
           multiple
         />
-        <button onClick={() => fileInputRef.current.click()}>Pick File</button>
+
         <textarea
+          id="entry-textarea"
           placeholder="Start writing..."
           value={entryText}
           onChange={handleTextareaChange}

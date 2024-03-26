@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { storage } from "../../firebase";
+import { ref, deleteObject } from "firebase/storage";
 
 const getStorageKey = (key) => `${key}`;
 
@@ -9,7 +11,7 @@ const loadPagesFromStorage = (key) => {
 
 const initialState = {
   pages: loadPagesFromStorage("pages"),
-  edit: [],
+  edit: {},
   total: 0,
   flagged: 0,
   isLoading: true,
@@ -28,9 +30,14 @@ const pageSlice = createSlice({
         `Card ID: ${cardId}, Existing Page ID: ${existingPage?.id}, page index: ${pageIndex}`
       );
 
-      if (payload.text === existingPage?.text) {
+      if (
+        existingPage &&
+        payload.text === existingPage.text &&
+        payload.img.every((img, index) => img === existingPage.img[index])
+      ) {
+        console.log("Returned");
         return;
-      } else if (existingPage?.id === cardId) {
+      } else if (existingPage) {
         state.pages.splice(pageIndex, 1);
       }
 
@@ -49,7 +56,7 @@ const pageSlice = createSlice({
     },
 
     clearEdit: (state) => {
-      state.edit = [];
+      state.edit = {};
     },
 
     markPage: (state, { payload }) => {
@@ -99,6 +106,25 @@ const pageSlice = createSlice({
       }
       // else delete page?.isExpanded;
     },
+    deleteImage: (state, { payload }) => {
+      const { id, index } = payload;
+      const card = state.pages.find((page) => page.id === id);
+      if (card) {
+        const deletedImage = card.img.splice(index, 1)[0];
+        const imageRef = ref(storage, deletedImage);
+        deleteObject(imageRef)
+          .then(() => {
+            console.log("Image deleted successfully from Firebase storage");
+          })
+          .catch((error) => {
+            console.error("Error deleting image from Firebase storage");
+          });
+        localStorage.setItem(
+          getStorageKey("pages"),
+          JSON.stringify(state.pages)
+        );
+      }
+    },
   },
 });
 
@@ -113,5 +139,6 @@ export const {
   editContent,
   clearEdit,
   expandCard,
+  deleteImage,
 } = pageSlice.actions;
 export default pageSlice.reducer;

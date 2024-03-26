@@ -233,9 +233,23 @@ body {
   padding-bottom: 6px;
 }
 
+.button-section {
+  display: flex;
+  width: 60px;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .button-section button {
   color: var(--clr-contrast);
   z-index: 3;
+}
+
+.marked-card {
+  position: relative;
+  transform: translateY(3px);
+  font-size: 1.4em;
+  color: rgb(192, 47, 47);
 }
 
 .modal-container {
@@ -274,6 +288,23 @@ body {
   flex-direction: column;
 }
 
+.modal-loading {
+  z-index: 10;
+  top: 0;
+  left: 0;
+  border: none;
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px) brightness(60%);
+  color: var(--clr-contrast);
+  height: 100%;
+  width: 100%;
+  font-size: 3em;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .modal.open {
   transform: translateY(0);
   transition: transform 0.3s ease-in-out;
@@ -285,6 +316,13 @@ body {
   font-size: clamp(1em, calc(1vw + 1em), 2em);
 }
 
+.no-image {
+  color: var(--clr-contrast);
+  background: var(--clr-secondary-contrast);
+  height: 3em;
+  border-radius: 1em;
+}
+
 .images-container {
   height: 250px;
   display: flex;
@@ -294,25 +332,66 @@ body {
   margin-bottom: 1em;
   overflow-x: scroll;
 }
-.upload-image {
-  margin: 0 0.1em;
-  /* object-fit: cover; */
-  /* width: 200px; */
+
+.selected-images {
+  border-radius: 0.5em;
+  object-fit: cover;
+  max-height: 250px;
+  max-width: 100%;
+  margin: 0 0.2em;
 }
 
 .image-cards {
+  width: 100%;
   display: flex;
   overflow: hidden;
   overflow-x: auto;
   gap: 0.5em;
-  max-height: 300px;
   border-radius: 0.5em;
 }
 
 .image-inside-card {
+  display: block;
   border-radius: 0.5em;
-  width: 100%;
   object-fit: cover;
+  height: 100%;
+  max-width: 100%;
+  background: var(--clr-secondary-contrast);
+}
+
+.image-container {
+  position: relative;
+  flex: 0 0 auto;
+  height: 300px;
+  max-width: 100%;
+}
+
+.single-image-width {
+  width: 100%;
+  object-position: 50% 50%;
+}
+
+.image-delete-button {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 1em;
+  background: var(--clr-secondary);
+  backdrop-filter: blur(20px);
+  color: var(--clr-contrast);
+  border: solid 1px var(--clr-border);
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+}
+.image-delete-button:hover {
+  display: inline-block;
+  filter: brightness(200%);
+}
+
+.image-delete-button.visible {
+  display: inline-block;
 }
 
 .modal textarea {
@@ -335,18 +414,43 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5em;
+  white-space: nowrap;
 }
 
 .top-section button {
+  color: var(--clr-contrast);
   background: none;
   border: none;
-  width: 35%;
   display: flex;
   justify-content: end;
-  font-size: 1.5em;
   font-weight: 600;
-  color: var(--clr-primary-accent);
   cursor: pointer;
+}
+
+.image-picker-button {
+  color: var(--clr-accent);
+  filter: brightness(80%);
+  transform: translateY(2px);
+  margin-left: 3em;
+  font-size: 1.6em;
+}
+
+.image-picker-button:hover {
+  filter: none;
+}
+
+.top-section-actions {
+  display: flex;
+  align-items: center;
+  width: 33%;
+}
+.top-section-actions h1 {
+  width: auto;
+}
+
+.modal-done-button {
+  width: 33%;
+  font-size: 1.5em;
 }
 
 .drop-down-menu {
@@ -396,10 +500,6 @@ body {
 
 .drop-down-menu > :nth-child(3) {
   color: rgb(247, 23, 23);
-}
-
-.button-section:hover {
-  color: black;
 }
 
 .button-section button {

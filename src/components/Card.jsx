@@ -1,27 +1,71 @@
-import React, { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { openDropDownMenu } from "../features/page/pageSlice";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  openDropDownMenu,
+  closeDropDownMenu,
+  expandCard,
+  deleteImage,
+} from "../features/page/pageSlice";
 import DropDownMenu from "./DropDownMenu";
-import { expandCard } from "../features/page/pageSlice";
+import { IoBookmark } from "react-icons/io5";
 
 const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
+  const { pages } = useSelector((store) => store.page);
+
   const dispatch = useDispatch();
   const buttonRef = useRef(null);
+
+  const handleButtonClick = (e) => {
+    e.stopPropagation();
+    dispatch(openDropDownMenu(id));
+  };
 
   return (
     <article>
       <div className="container-card">
-        <div className="card" onClick={() => dispatch(expandCard({ id }))}>
+        <div
+          style={{ maxWidth: pages.length > 1 ? "" : "700px" }}
+          className="card"
+          onClick={() => {
+            dispatch(expandCard({ id }));
+            dispatch(closeDropDownMenu());
+          }}
+        >
           <div className="content">
             <div className="image-cards">
               {img?.map((image, index) => {
+                const [showButton, setShowButton] = useState(false);
+
                 return (
-                  <img
+                  <div
                     key={index}
-                    src={image}
-                    alt={`Image ${index}`}
-                    className="image-inside-card"
-                  />
+                    className={`image-container ${
+                      img.length > 1 ? "" : "single-image-width"
+                    }`}
+                    id={index}
+                  >
+                    <img
+                      src={image}
+                      alt={`Image ${index}`}
+                      className={`image-inside-card ${
+                        img.length > 1 ? "" : "single-image-width"
+                      }`}
+                      onMouseEnter={() => setShowButton(true)}
+                      onMouseLeave={() => setShowButton(false)}
+                    />
+                    <button
+                      className={`image-delete-button ${
+                        showButton ? "visible" : ""
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("clicked button");
+                        dispatch(deleteImage({ id, index }));
+                      }}
+                    >
+                      X
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -35,16 +79,13 @@ const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
             <span className="date-var">
               {`${date.edited} ${date.day}, ${date.dayN} ${date.month}`}
             </span>
-
             <div className="button-section">
-              <button
-                ref={buttonRef}
-                onClick={() => {
-                  dispatch(openDropDownMenu(id));
-                }}
-              >
-                ···
-              </button>
+              <div>{marked && <IoBookmark className="marked-card" />}</div>
+              <div className="">
+                <button ref={buttonRef} onClick={handleButtonClick}>
+                  ···
+                </button>
+              </div>
             </div>
           </div>
         </div>
