@@ -1,8 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
+const firebaseKey = import.meta.env.VITE_FIREBASE_KEY;
+
 const firebaseConfig = {
-  apiKey: "AIzaSyB_ii2adM1PY-s8kmKx0WC2lQ1XO0zykUQ",
+  apiKey: firebaseKey,
   authDomain: "uploade-file.firebaseapp.com",
   projectId: "uploade-file",
   storageBucket: "uploade-file.appspot.com",

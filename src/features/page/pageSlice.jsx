@@ -23,6 +23,10 @@ const pageSlice = createSlice({
   initialState,
   reducers: {
     addPage: (state, { payload }) => {
+      if (!payload.text && (!payload.img || payload.img.length === 0)) {
+        console.log("Empty payload, not adding to state");
+        return state; // Return the current state if the payload is empty
+      }
       const cardId = payload.id;
       const existingPage = state.pages.find((page) => page.id === cardId);
       const pageIndex = state.pages.findIndex((page) => page === existingPage);
@@ -104,10 +108,10 @@ const pageSlice = createSlice({
       if (page) {
         page.isExpanded = !page.isExpanded;
       }
-      // else delete page?.isExpanded;
     },
     deleteImage: (state, { payload }) => {
       const { id, index } = payload;
+      const cardIndex = state.pages.findIndex((page) => page.id === id);
       const card = state.pages.find((page) => page.id === id);
       if (card) {
         const deletedImage = card.img.splice(index, 1)[0];
@@ -119,6 +123,11 @@ const pageSlice = createSlice({
           .catch((error) => {
             console.error("Error deleting image from Firebase storage");
           });
+
+        if (card.img.length === 0 && !card.text) {
+          state.pages.splice(cardIndex, 1);
+        }
+
         localStorage.setItem(
           getStorageKey("pages"),
           JSON.stringify(state.pages)

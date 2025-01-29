@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { BsImages } from "react-icons/bs";
 import { GrDocumentMissing } from "react-icons/gr";
 import { closeModal } from "../features/modal/modalSlice";
-import { clearEdit } from "../features/page/pageSlice";
+import { clearEdit, deleteImage } from "../features/page/pageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { addPage } from "../features/page/pageSlice";
 import { nanoid } from "nanoid";
@@ -13,9 +13,9 @@ const Modal = () => {
   const { edit } = useSelector((store) => store.page);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const pageId = nanoid();
   const id = edit.id ? edit.id : pageId;
-  console.log(`Current ID value: ${id}`);
 
   const currentDate = new Date();
   const dayNames = [
@@ -58,7 +58,6 @@ const Modal = () => {
   const handleImageUpload = (e) => {
     const files = e.target.files;
     const selectedImages = Array.from(files);
-    console.log(selectedImages);
     setImages(selectedImages);
   };
 
@@ -97,7 +96,6 @@ const Modal = () => {
     }
 
     const imagesAddedDuringEdit = images && images.length > 0;
-    console.log(imagesAddedDuringEdit);
 
     let updatedImages;
     if (imagesAddedDuringEdit) {
@@ -116,7 +114,6 @@ const Modal = () => {
     };
 
     if (edit) {
-      console.log("loading...");
       dispatch(addPage(pageContent));
       dispatch(clearEdit());
     }
@@ -132,6 +129,18 @@ const Modal = () => {
 
   const handleTextareaChange = (e) => {
     setEntryText(e.target.value);
+  };
+
+  const handleDeleteImage = (index) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+    setImages(updatedImages);
+  };
+
+  const handleDeleteEditImage = (index) => {
+    const updatedEditImages = [...edit.img];
+    updatedEditImages.splice(index, 1);
+    dispatch(deleteImage({ id, index }));
   };
 
   return (
@@ -158,23 +167,53 @@ const Modal = () => {
           </button>
         </div>
         <div
-          className={`${images > 0 || edit.img > 0 ? "images-container" : ""}`}
+          className={`${
+            images.length > 0 || (edit.img && edit.img.length > 0)
+              ? "images-container"
+              : ""
+          }`}
         >
           {(images || []).map((image, index) => (
-            <img
-              key={`selected-${index}`}
-              src={URL.createObjectURL(image)}
-              alt={`Selected ${index}-missing`}
-              className="selected-images"
-            />
+            <div className="image-wrapper">
+              <img
+                key={`selected-${index}`}
+                src={URL.createObjectURL(image)}
+                alt={`Selected ${index}-missing`}
+                className="selected-images"
+                onMouseEnter={() => setShowButton(true)}
+                onMouseLeave={() => setShowButton(false)}
+              />
+              <button
+                className={`image-delete-button ${showButton ? "visible" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteImage(index);
+                }}
+              >
+                X
+              </button>
+            </div>
           ))}
           {(edit.img || []).map((image, index) => (
-            <img
-              key={`edit-${index}`}
-              src={image}
-              alt={`${(<GrDocumentMissing />)} ${index}-missing`}
-              className="selected-images"
-            />
+            <div className="image-wrapper">
+              <img
+                key={`edit-${index}`}
+                src={image}
+                alt={`${(<GrDocumentMissing />)} ${index}-missing`}
+                className="selected-images"
+                onMouseEnter={() => setShowButton(true)}
+                onMouseLeave={() => setShowButton(false)}
+              />
+              <button
+                className={`image-delete-button ${showButton ? "visible" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteEditImage(index);
+                }}
+              >
+                X
+              </button>
+            </div>
           ))}
           {/* {(!images || !edit.img) && (
             <p className="no-image">No images selected</p>

@@ -22,9 +22,11 @@ const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
 
   return (
     <article>
-      <div className="container-card">
+      <div
+        className="container-card"
+        style={{ maxWidth: pages.length > 1 ? "" : "700px" }}
+      >
         <div
-          style={{ maxWidth: pages.length > 1 ? "" : "700px" }}
           className="card"
           onClick={() => {
             dispatch(expandCard({ id }));

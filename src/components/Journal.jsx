@@ -11,13 +11,14 @@ const Journal = () => {
 
   return (
     <main
-      className={`${hasPages ? "journal no-pages" : " journal"}`}
+      className={`${hasPages ? "no-pages" : ""}`}
       onClick={() => dispatch(closeDropDownMenu())}
     >
-      <div className="journal-container">
-        <h1 style={{ margin: hasPages ? "0px" : "1em 0 2em 0em" }}>JOURNAL</h1>
+      <div className="journal-container ">
+        <h1 className={`text-red text-4xl ${hasPages ? "m-20" : "mt-8 mb-6"}`}>
+          JOURNAL
+        </h1>
         <div className="pages-container">
-          {/* {hasPages ? <span>I might use it later</span> : null} */}
           {pages
             .slice()
             .reverse()
