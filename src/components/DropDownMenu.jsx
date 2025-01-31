@@ -19,7 +19,7 @@ const DropDownMenu = ({ openMenu, id, marked }) => {
     storageKey: "pages",
   };
   return (
-    <div className={`${openMenu ? "drop-down-menu " : "drop-menu-hidden"}`}>
+    <div className={`${openMenu ? "drop-down-menu" : "drop-menu-hidden"}`}>
       <button
         onClick={() => {
           dispatch(closeDropDownMenu());

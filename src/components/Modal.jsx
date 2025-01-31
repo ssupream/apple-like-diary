@@ -86,7 +86,7 @@ const Modal = () => {
             const url = await getDownloadURL(imageRef);
             console.log(`Image ${image.name} uploaded successfully`);
             return url;
-          })
+          }),
         );
       } catch (error) {
         console.error("Error uploading images:", error);
@@ -144,7 +144,7 @@ const Modal = () => {
   };
 
   return (
-    <main className={`modal-container ${openAnimation ? "open" : ""}`}>
+    <main className={`modal-container z-50 ${openAnimation ? "open" : ""}`}>
       <div className={`modal ${openAnimation ? "open" : ""}`}>
         {loading && <div className="modal-loading">Loading...</div>}
         <div className="top-section">

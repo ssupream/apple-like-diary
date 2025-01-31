@@ -17,7 +17,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   return (
-    <nav className="nav-bar">
+    <nav className="nav-bar fixed bottom-0 left-0 right-0 z-20 flex justify-around md:static md:block">
       <button
         className="nav-buttons add"
         onClick={() => {
@@ -50,7 +50,6 @@ const Navbar = () => {
         className="nav-buttons"
         onClick={() => {
           dispatch(toggle());
-          console.log(theme);
         }}
       >
         {theme === "dark" ? <FaToggleOn /> : <FaToggleOff />}

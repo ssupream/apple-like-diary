@@ -23,76 +23,71 @@ const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
   return (
     <article>
       <div
-        className="container-card"
-        style={{ maxWidth: pages.length > 1 ? "" : "700px" }}
+        className="card"
+        onClick={() => {
+          dispatch(expandCard({ id }));
+          dispatch(closeDropDownMenu());
+        }}
       >
-        <div
-          className="card"
-          onClick={() => {
-            dispatch(expandCard({ id }));
-            dispatch(closeDropDownMenu());
-          }}
-        >
-          <div className="content">
-            <div className="image-cards">
-              {img?.map((image, index) => {
-                const [showButton, setShowButton] = useState(false);
+        <div className="content">
+          <div className="image-cards">
+            {img?.map((image, index) => {
+              const [showButton, setShowButton] = useState(false);
 
-                return (
-                  <div
-                    key={index}
-                    className={`image-container ${
+              return (
+                <div
+                  key={index}
+                  className={`image-container ${
+                    img.length > 1 ? "" : "single-image-width"
+                  }`}
+                  id={index}
+                >
+                  <img
+                    src={image}
+                    alt={`Image ${index}`}
+                    className={`image-inside-card ${
                       img.length > 1 ? "" : "single-image-width"
                     }`}
-                    id={index}
+                    onMouseEnter={() => setShowButton(true)}
+                    onMouseLeave={() => setShowButton(false)}
+                  />
+                  <button
+                    className={`image-delete-button ${
+                      showButton ? "visible" : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("clicked button");
+                      dispatch(deleteImage({ id, index }));
+                    }}
                   >
-                    <img
-                      src={image}
-                      alt={`Image ${index}`}
-                      className={`image-inside-card ${
-                        img.length > 1 ? "" : "single-image-width"
-                      }`}
-                      onMouseEnter={() => setShowButton(true)}
-                      onMouseLeave={() => setShowButton(false)}
-                    />
-                    <button
-                      className={`image-delete-button ${
-                        showButton ? "visible" : ""
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log("clicked button");
-                        dispatch(deleteImage({ id, index }));
-                      }}
-                    >
-                      X
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-            <div>
-              <p className={`text-content ${isExpanded ? "expand-text " : ""}`}>
-                {text}
-              </p>
-            </div>
+                    X
+                  </button>
+                </div>
+              );
+            })}
           </div>
-          <div className="date">
-            <span className="date-var">
-              {`${date.edited} ${date.day}, ${date.dayN} ${date.month}`}
-            </span>
-            <div className="button-section">
-              <div>{marked && <IoBookmark className="marked-card" />}</div>
-              <div className="">
-                <button ref={buttonRef} onClick={handleButtonClick}>
-                  ···
-                </button>
-              </div>
+          <div>
+            <p className={`text-content ${isExpanded ? "expand-text" : ""}`}>
+              {text}
+            </p>
+          </div>
+        </div>
+        <div className="date">
+          <span className="date-var">
+            {`${date.edited} ${date.day}, ${date.dayN} ${date.month}`}
+          </span>
+          <div className="button-section">
+            <div>{marked && <IoBookmark className="marked-card" />}</div>
+            <div className="">
+              <button ref={buttonRef} onClick={handleButtonClick}>
+                ···
+              </button>
             </div>
           </div>
         </div>
-        <DropDownMenu openMenu={openMenu} id={id} marked={marked} />
       </div>
+      <DropDownMenu openMenu={openMenu} id={id} marked={marked} />
     </article>
   );
 };
