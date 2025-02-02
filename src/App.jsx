@@ -15,7 +15,7 @@ function App() {
 
   return (
     <main
-      className={`background relative flex h-screen w-screen flex-row-reverse overflow-scroll ${theme} ${hasPages ? "no-pages" : ""}`}
+      className={`background relative flex h-screen w-screen flex-row-reverse overflow-scroll ${theme}`}
       onClick={() => dispatch(closeDropDownMenu())}
     >
       <div className="noise fixed left-0 top-0 h-screen w-screen bg-[url('public/noise.webp')] bg-repeat"></div>

@@ -235,7 +235,7 @@ const Modal = () => {
           value={entryText}
           onChange={handleTextareaChange}
           autoFocus={true}
-        ></textarea>
+        />
       </div>
     </main>
   );

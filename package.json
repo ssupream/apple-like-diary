@@ -38,6 +38,8 @@
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "sass": "^1.83.4",
+    "sass-loader": "^16.0.4",
     "tailwindcss": "^1.9.6",
     "vite": "^6.0.11"
   },

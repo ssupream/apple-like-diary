@@ -9,7 +9,7 @@ import {
 import DropDownMenu from "./DropDownMenu";
 import { IoBookmark } from "react-icons/io5";
 
-const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
+const Card = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
   const { pages } = useSelector((store) => store.page);
 
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
   return (
     <article>
       <div
-        className="card"
+        className="card relative"
         onClick={() => {
           dispatch(expandCard({ id }));
           dispatch(closeDropDownMenu());
@@ -73,6 +73,7 @@ const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
             </p>
           </div>
         </div>
+        <DropDownMenu openMenu={openMenu} id={id} marked={marked} />
         <div className="date">
           <span className="date-var">
             {`${date.edited} ${date.day}, ${date.dayN} ${date.month}`}
@@ -87,9 +88,8 @@ const Page = ({ openMenu, id, date, text, marked, isExpanded, img }) => {
           </div>
         </div>
       </div>
-      <DropDownMenu openMenu={openMenu} id={id} marked={marked} />
     </article>
   );
 };
 
-export default Page;
+export default Card;
