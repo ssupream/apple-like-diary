@@ -86,7 +86,7 @@ const Modal = () => {
             const url = await getDownloadURL(imageRef);
             console.log(`Image ${image.name} uploaded successfully`);
             return url;
-          }),
+          })
         );
       } catch (error) {
         console.error("Error uploading images:", error);
@@ -144,10 +144,10 @@ const Modal = () => {
   };
 
   return (
-    <main className={`modal-container z-50 ${openAnimation ? "open" : ""}`}>
-      <div className={`modal ${openAnimation ? "open" : ""}`}>
+    <main className={`modal-container  ${openAnimation ? "open" : ""}`}>
+      <div className={`modal mt-32 md:mx-2 ${openAnimation ? "open" : ""}`}>
         {loading && <div className="modal-loading">Loading...</div>}
-        <div className="top-section">
+        <div className="top-section relative">
           <div className="top-section-actions">
             <h1>{`${edit.text ? "Edit" : "New entry"}`}</h1>
             <button
@@ -158,10 +158,13 @@ const Modal = () => {
             </button>
           </div>
 
-          <div className="date">{`
+          <div className="date">
+            <span>{`
           ${dayName},
           ${currentDate.getDate()} 
-          ${monthName}`}</div>
+          ${monthName}`}</span>
+          </div>
+
           <button className="modal-done-button" onClick={handleDoneClick}>
             Done
           </button>

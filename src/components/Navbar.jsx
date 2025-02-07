@@ -9,6 +9,7 @@ import {
 import { IoBookmark } from "react-icons/io5";
 import { IoIosJournal } from "react-icons/io";
 import { IoMdAdd } from "react-icons/io";
+import { FiPlusCircle } from "react-icons/fi";
 import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { toggle } from "../features/theme/themeSlice";
 
@@ -17,9 +18,9 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   return (
-    <nav className="nav-bar fixed bottom-0 left-0 right-0 z-20 flex justify-around md:static md:block">
+    <nav className="nav-bar md:p-4 gap-3 fixed bottom-0 left-0 right-0 flex items-center justify-around md:static md:block">
       <button
-        className="nav-buttons add"
+        className="nav-buttons add md:text-3xl text-5xl"
         onClick={() => {
           dispatch(openModal());
           dispatch(closeDropDownMenu());
@@ -28,7 +29,7 @@ const Navbar = () => {
         <IoMdAdd />
       </button>
       <button
-        className="nav-buttons"
+        className="nav-buttons md:text-2xl text-4xl"
         onClick={() => {
           dispatch(renderPages());
           dispatch(closeDropDownMenu());
@@ -37,7 +38,7 @@ const Navbar = () => {
         <IoIosJournal />
       </button>
       <button
-        className="nav-buttons"
+        className="nav-buttons md:text-2xl text-4xl"
         onClick={() => {
           dispatch(closeDropDownMenu());
           dispatch(renderMarked());
@@ -47,7 +48,7 @@ const Navbar = () => {
       </button>
       <button
         id="theme-toggle"
-        className="nav-buttons"
+        className="nav-buttons md:text-2xl text-4xl"
         onClick={() => {
           dispatch(toggle());
         }}

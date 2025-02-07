@@ -15,10 +15,12 @@
   /* Dark theme colors */
   --clr-background-dark: rgb(20, 20, 20);
   --primary-dark: rgba(85, 85, 85, 0.4);
+  --primary-dark-transparent: rgba(85, 85, 85, 0.2);
   --border-dark: rgba(73, 73, 73, 0.1);
   --border-dark-select: rgba(255, 255, 255, 0.315);
   --primary-dark-contrast: rgba(255, 255, 255, 0.8);
   --secondary-dark-contrast: rgba(255, 255, 255, 0.1);
+  --background-dark: rgba(22, 22, 22, 0.5);
   --grd-dark: linear-gradient(
     0deg,
     lab(35% 24 -31) 0%,
@@ -30,12 +32,14 @@
   /* Light theme colors */
   --clr-background-light: #e6e6e6;
   --primary-light: rgba(255, 255, 255, 0.6);
+  --primary-light-transparent: rgba(255, 255, 255, 0.6);
   --secondary-light: rgba(255, 255, 255, 0.2);
   --border-light: rgba(255, 255, 255, 0.1);
   --border-light-select: rgba(0, 0, 0, 0.24);
   --primary-light-contrast: rgba(0, 0, 0, 0.8);
   --secondary-light-contrast: rgba(0, 0, 0, 0.1);
   --grd-light: linear-gradient(180deg, lch(90% 2 10) 0%, lch(85% 10 310) 100%);
+  --background-light: rgba(22, 22, 22, 0.5);
 
   /* Other common variables */
   --transition: all 0.3s linear;
@@ -46,6 +50,7 @@
 .light {
   --clr-background: var(--clr-background-light);
   --clr-primary: var(--primary-light);
+  --clr-primary-trans: var(--primary-light-transparent);
   --clr-secondary: var(--secondary-light);
   --clr-border: var(--border-light);
   --clr-border-select: var(--border-light-select);
@@ -53,17 +58,20 @@
   --clr-secondary-contrast: var(--secondary-light-contrast);
   --clr-accent: var(--clr-primary-dark);
   --clr-grad: var(--grd-light);
+  --background-modal: var(--background-light);
 }
 
 .dark {
   --clr-background: var(--clr-background-dark);
   --clr-primary: var(--primary-dark);
+  --clr-primary-trans: var(--primary-dark-transparent);
   --clr-border: var(--border-dark);
   --clr-border-select: var(--border-dark-select);
   --clr-contrast: var(--primary-dark-contrast);
   --clr-secondary-contrast: var(--secondary-dark-contrast);
   --clr-accent: var(--clr-primary-light);
   --clr-grad: var(--grd-dark);
+  --background-modal: var(--background-dark);
 }
 
 .display-no {
@@ -77,17 +85,13 @@
 }
 
 .nav-buttons {
-  height: 4rem;
-  width: 4rem;
-  margin: 0.4em 0;
-  border: 0;
-  border-radius: 40%;
-  font-size: 2em;
+  margin: 2rem auto;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   filter: opacity(70%);
+  z-index: 1;
 }
 
 .nav-buttons:hover {
@@ -96,21 +100,7 @@
 }
 
 .nav-buttons:focus {
-  all: unset;
-  height: 4rem;
-  width: 4rem;
-  margin: 0.4em 0;
-  background: none;
-  border: 0;
-  border-radius: 40%;
-  font-size: 2em;
-  color: var(--clr-contrast);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  /* background: rgb(128, 63, 233, 0.3); */
-  /* box-shadow: 0 0px 3px rgba(128, 63, 233, 0.3); */
+  filter: opacity(100%);
 }
 
 .journal {
@@ -163,9 +153,7 @@
   border: 1px solid var(--clr-border);
   position: relative;
   z-index: 1;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   will-change: transform, box-shadow;
 }
 
@@ -269,40 +257,37 @@ textarea::placeholder {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(0); /* Start with no blur */
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 0.3s ease-in-out,
-    backdrop-filter 0.3s ease-in-out; /* Add backdrop-filter to transition */
+  transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
 .modal-container.open {
   opacity: 1;
   pointer-events: auto;
-  backdrop-filter: blur(30px);
+  background-color: var(--background-modal);
 }
 .modal {
-  background: var(--clr-primary);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(30px);
+  background: var(--clr-primary-trans);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--clr-border);
-  height: 96%;
+  height: 100%;
   width: 100%;
-  max-width: 900px;
+  max-width: 1600px;
   border-radius: var(--radius);
   padding: 1.1rem 1rem;
   bottom: -130%;
-  opacity: 1;
-  transform: translateY(100%) translateZ(0);
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out;
+  opacity: 0;
   overflow: auto;
   display: flex;
   flex-direction: column;
+  z-index: 10;
 }
 
 .modal-loading {
@@ -324,7 +309,9 @@ textarea::placeholder {
 
 .modal.open {
   transform: translateY(0);
-  transition: transform 0.3s ease-in-out;
+  opacity: 1;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .modal h1 {
@@ -569,4 +556,9 @@ textarea::placeholder {
 
 .dark .noise {
   filter: opacity(0.25) brightness(1) invert();
+}
+
+.icon-gb {
+  background: var(--clr-primary);
+  backdrop-filter: blur(30px);
 }

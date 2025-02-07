@@ -4,6 +4,7 @@ import Modal from "./components/Modal";
 import "../src/App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { closeDropDownMenu } from "./features/page/pageSlice";
+import TopBar from "./components/TopBar";
 
 function App() {
   const { isOpen } = useSelector((store) => store.modal);
@@ -15,14 +16,19 @@ function App() {
 
   return (
     <main
-      className={`background relative flex h-screen w-screen flex-row-reverse overflow-scroll ${theme}`}
+      className={`background ${theme} w-screen h-screen flex flex-col relative`} // Added flex-col
       onClick={() => dispatch(closeDropDownMenu())}
     >
-      <div className="noise fixed left-0 top-0 h-screen w-screen bg-[url('public/noise.webp')] bg-repeat"></div>
-      {isOpen && <Modal />}
-
-      <Journal />
-      <Navbar />
+      <div className="noise fixed left-0 top-0 h-screen w-screen bg-[url('public/noise.webp')] bg-repeat z-[-1]"></div>
+      <TopBar />
+      <div
+        className={`relative flex flex-row-reverse flex-1`} // Added flex-1
+        onClick={() => dispatch(closeDropDownMenu())}
+      >
+        {isOpen && <Modal />}
+        <Journal />
+        <Navbar />
+      </div>
     </main>
   );
 }
